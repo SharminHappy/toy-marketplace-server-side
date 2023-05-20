@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 
 const app = express();
@@ -37,27 +37,46 @@ async function run() {
 
         app.post('/toys', async (req, res) => {
             const toy = req.body;
-            if(!toy){
-                return res.status(404).send({message:"toy data is not found"})
-            }
+            // const price=parseInt(body.price);
+            // body.price=price;
+            // body.createdAt=new Date();
+
             const result = await toyCollection.insertOne(toy);
             res.send(result);
 
         })
 
-        app.get('/allToys/:text',async(req,res)=>{
+       
+
+        app.get('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await toyCollection.findOne(query);
+            res.send(result)
+
+
+        })
+
+        app.get('/allToys/:text', async (req, res) => {
             console.log(req.params.text);
-            if(req.params.text=="disneyPrincess" || req.params.text=="frozenDolls" || req.params.text=="mickeyMouseDolls" ){
-            const cursor=toyCollection.find({subCategory:req.params.text});
-            const result=await cursor.toArray();
-            return res.send(result)
+            if (req.params.text == "disneyPrincess" || req.params.text == "frozenDolls" || req.params.text == "mickeyMouseDolls") {
+                const cursor = toyCollection.find({ subCategory: req.params.text });
+
+                const result = await cursor.toArray();
+                return res.send(result)
             }
-            const cursor=toyCollection.find();
-            const result=await cursor.toArray();
+            const cursor = toyCollection.find();
+            const result = await cursor.toArray();
             res.send(result);
         })
 
 
+
+
+        // const cursor=toyCollection.find({subCategory:req.params.text});
+        // const sorting=cursor.sort({createdAt: 1});
+
+        // const result=await sorting.toArray();
 
 
 
