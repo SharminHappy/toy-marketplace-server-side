@@ -45,7 +45,13 @@ async function run() {
 
         })
 
-        app.get('/alltoys',async(req,res)=>{
+        app.get('/allToys/:text',async(req,res)=>{
+            console.log(req.params.text);
+            if(req.params.text=="disneyPrincess" || req.params.text=="frozenDolls" || req.params.text=="mickeyMouseDolls" ){
+            const cursor=toyCollection.find({subCategory:req.params.text});
+            const result=await cursor.toArray();
+            return res.send(result)
+            }
             const cursor=toyCollection.find();
             const result=await cursor.toArray();
             res.send(result);
