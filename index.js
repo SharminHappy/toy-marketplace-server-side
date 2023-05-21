@@ -46,12 +46,27 @@ async function run() {
 
         })
 
-        app.get('/toys', async (req, res) => {
+        app.get('/toys',async(req,res)=>{
+
             const cursor = toyCollection.find();
             const result = await cursor.toArray();
-            res.send(result)
+            res.send(result);
 
         })
+
+        // app.get('/toys/:toyName', async (req, res) => {
+           
+        //     console.log(req.params.toyName);
+        //     let params = {}
+        //     if (req.params?.toyName) {
+        //         params = { toyName: req.params.toyName }
+        //     }
+
+        //     const cursor = toyCollection.find(params);
+        //     const result = await cursor.toArray();
+        //     res.send(result);
+
+        // })
 
         app.get('/toys/:id', async (req, res) => {
             const id = req.params.id;
