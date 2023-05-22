@@ -57,8 +57,8 @@ async function run() {
         })
 
         app.get('/toys',async(req,res)=>{
-
-            const cursor = toyCollection.find();
+            const limit=parseInt(req.query.limit);
+            const cursor = toyCollection.find().limit(limit);
             const result = await cursor.toArray();
             res.send(result);
 
@@ -77,6 +77,18 @@ async function run() {
         //     res.send(result);
 
         // })
+
+        app.get('/toySearchByToyName/:text', async (req, res) => {
+            const sort = req.params.sort;
+            const search = req.params.text;
+            console.log(search);
+          
+            const query = {toyName: { $regex: search, $options: 'i'}}
+         
+            const cursor = toyCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
 
         app.get('/myToy/:email', async (req, res) => {
            
