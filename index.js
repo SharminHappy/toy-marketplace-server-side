@@ -35,6 +35,16 @@ async function run() {
         const toyDatabase = client.db("toyMarketPlaceDB");
         const toyCollection = toyDatabase.collection("toys");
 
+
+        // indexing
+        const indexKeys={toyName:1};
+        const indexOptions={name:"toyName"};
+        const result=await toyCollection.createIndex(indexKeys,indexOptions);
+
+
+       
+
+
         app.post('/toys', async (req, res) => {
             const toy = req.body;
             // const price=parseInt(body.price);
@@ -54,19 +64,33 @@ async function run() {
 
         })
 
-        // app.get('/toys/:toyName', async (req, res) => {
-           
-        //     console.log(req.params.toyName);
-        //     let params = {}
-        //     if (req.params?.toyName) {
-        //         params = { toyName: req.params.toyName }
-        //     }
 
-        //     const cursor = toyCollection.find(params);
+        // app.get('/toySearchByToyName/:text',async(req,res)=>{
+        //     const searchText=req.params.text;
+
+        //     const cursor=await toyCollection.find({
+        //         $or:[
+        //             {toyName:{$regex:searchText,$options:'i'}}
+        //         ]
+        //     });
         //     const result = await cursor.toArray();
         //     res.send(result);
 
         // })
+
+        app.get('/myToy/:email', async (req, res) => {
+           
+            console.log(req.params.email);
+            // let query = {}
+            // if (req.query?.email) {
+            //     params = { email: req.query.email }
+            // }
+
+            const cursor = toyCollection.find({email: req.params.email});
+            const result = await cursor.toArray();
+            res.send(result);
+
+        })
 
         app.get('/toys/:id', async (req, res) => {
             const id = req.params.id;
