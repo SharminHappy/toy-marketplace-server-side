@@ -37,68 +37,24 @@ async function run() {
 
 
         // indexing
-        const indexKeys={toyName:1};
-        const indexOptions={name:"toyName"};
-        const result=await toyCollection.createIndex(indexKeys,indexOptions);
+        const indexKeys = { toyName: 1 };
+        const indexOptions = { name: "toyName" };
+        const result = await toyCollection.createIndex(indexKeys, indexOptions);
 
 
-       
+
 
 
         app.post('/toys', async (req, res) => {
-            const toy = req.body;
-            // const price=parseInt(body.price);
-            // body.price=price;
-            // body.createdAt=new Date();
-
-            const result = await toyCollection.insertOne(toy);
+            const body = req.body;
+            const result = await toyCollection.insertOne(body);
             res.send(result);
 
         })
 
-        app.get('/toys',async(req,res)=>{
-            const limit=parseInt(req.query.limit);
+        app.get('/toys', async (req, res) => {
+            const limit = parseInt(req.query.limit);
             const cursor = toyCollection.find().limit(limit);
-            const result = await cursor.toArray();
-            res.send(result);
-
-        })
-
-
-        // app.get('/toySearchByToyName/:text',async(req,res)=>{
-        //     const searchText=req.params.text;
-
-        //     const cursor=await toyCollection.find({
-        //         $or:[
-        //             {toyName:{$regex:searchText,$options:'i'}}
-        //         ]
-        //     });
-        //     const result = await cursor.toArray();
-        //     res.send(result);
-
-        // })
-
-        app.get('/toySearchByToyName/:text', async (req, res) => {
-            const sort = req.params.sort;
-            const search = req.params.text;
-            console.log(search);
-          
-            const query = {toyName: { $regex: search, $options: 'i'}}
-         
-            const cursor = toyCollection.find(query);
-            const result = await cursor.toArray();
-            res.send(result);
-        })
-
-        app.get('/myToy/:email', async (req, res) => {
-           
-            console.log(req.params.email);
-            // let query = {}
-            // if (req.query?.email) {
-            //     params = { email: req.query.email }
-            // }
-
-            const cursor = toyCollection.find({email: req.params.email});
             const result = await cursor.toArray();
             res.send(result);
 
@@ -109,9 +65,34 @@ async function run() {
             const query = { _id: new ObjectId(id) }
             const result = await toyCollection.findOne(query);
             res.send(result)
+        })
 
+        app.get('/toySearchByToyName/:text', async (req, res) => {
+            const search = req.params.text;
+            console.log(search);
+            const query = { toyName: { $regex: search, $options: 'i' } }
+            const cursor = toyCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+        app.get('/myToy/:email', async (req, res) => {
+
+            console.log(req.params.email);
+            const cursor = toyCollection.find({ email: req.params.email });
+            const result = await cursor.toArray();
+            res.send(result);
 
         })
+
+
+        app.delete('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await toyCollection.deleteOne(query);
+            res.send(result)
+        })
+
 
         app.get('/allToys/:text', async (req, res) => {
             console.log(req.params.text);
@@ -125,15 +106,6 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         })
-
-
-
-
-        // const cursor=toyCollection.find({subCategory:req.params.text});
-        // const sorting=cursor.sort({createdAt: 1});
-
-        // const result=await sorting.toArray();
-
 
 
 
