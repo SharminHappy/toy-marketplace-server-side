@@ -37,9 +37,9 @@ async function run() {
 
 
         // indexing
-        const indexKeys = { toyName: 1 };
-        const indexOptions = { name: "toyName" };
-        const result = await toyCollection.createIndex(indexKeys, indexOptions);
+        // const indexKeys = { toyName: 1 };
+        // const indexOptions = { name: "toyName" };
+        // const result = await toyCollection.createIndex(indexKeys, indexOptions);
 
 
 
@@ -81,6 +81,24 @@ async function run() {
             console.log(req.params.email);
             const cursor = toyCollection.find({ email: req.params.email });
             const result = await cursor.toArray();
+            res.send(result);
+
+        })
+
+
+        app.put('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const option = { upsert: true };
+            const updateToy = req.body;
+            const toy = {
+                $set: {
+                    price: updateToy.price,
+                    availableQuantity: updateToy.availableQuantity,
+                    detailDescription: updateToy.detailDescription,
+                }
+            };
+            const result = await toyCollection.updateOne(filter, toy, option)
             res.send(result);
 
         })
